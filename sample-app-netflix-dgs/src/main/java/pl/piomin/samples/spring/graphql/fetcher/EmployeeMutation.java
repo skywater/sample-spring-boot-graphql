@@ -26,8 +26,8 @@ public class EmployeeMutation {
 
     @DgsData(parentType = "MutationResolver", field = "newEmployee")
     public Employee addEmployee(@InputArgument("employee") EmployeeInput employeeInput) {
-        Department department = departmentRepository.findById(employeeInput.getDepartmentId()).orElseThrow();
-        Organization organization = organizationRepository.findById(employeeInput.getOrganizationId()).orElseThrow();
+        Department department = departmentRepository.findById(employeeInput.getDepartmentId()).orElseThrow(() -> new RuntimeException("数据不存在！"));
+        Organization organization = organizationRepository.findById(employeeInput.getOrganizationId()).orElseThrow(() -> new RuntimeException("数据不存在！"));
         return employeeRepository.save(new Employee(null, employeeInput.getFirstName(), employeeInput.getLastName(),
                 employeeInput.getPosition(), employeeInput.getAge(), employeeInput.getSalary(),
                 department, organization));

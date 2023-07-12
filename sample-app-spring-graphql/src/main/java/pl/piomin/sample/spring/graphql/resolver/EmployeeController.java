@@ -35,7 +35,7 @@ public class EmployeeController {
 
     @QueryMapping
     public Employee employee(@Argument Integer id) {
-        return employeeRepository.findById(id).orElseThrow();
+        return employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("数据不存在！"));
     }
 
     @MutationMapping

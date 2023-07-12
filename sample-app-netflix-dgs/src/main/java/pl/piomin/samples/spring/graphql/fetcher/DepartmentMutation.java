@@ -22,7 +22,7 @@ public class DepartmentMutation {
 
     @DgsData(parentType = "MutationResolver", field = "newDepartment")
     public Department newDepartment(@InputArgument("department") DepartmentInput departmentInput) {
-        Organization organization = organizationRepository.findById(departmentInput.getOrganizationId()).orElseThrow();
+        Organization organization = organizationRepository.findById(departmentInput.getOrganizationId()).orElseThrow(() -> new RuntimeException("数据不存在！"));
         return departmentRepository.save(new Department(null, departmentInput.getName(), null, organization));
     }
 

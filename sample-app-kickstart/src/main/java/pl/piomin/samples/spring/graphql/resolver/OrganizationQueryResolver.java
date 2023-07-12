@@ -19,6 +19,6 @@ public class OrganizationQueryResolver implements GraphQLQueryResolver {
 	}
 
 	public Organization organization(Integer id) {
-		return repository.findById(id).orElseThrow();
+		return repository.findById(id).orElseThrow(() -> new RuntimeException("数据不存在！"));
 	}
 }

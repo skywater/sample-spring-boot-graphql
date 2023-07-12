@@ -44,7 +44,7 @@ public class OrganizationController {
             spec = spec.and(fetchEmployees());
         if (selectionSet.contains("departments"))
             spec = spec.and(fetchDepartments());
-        return repository.findOne(spec).orElseThrow();
+        return repository.findOne(spec).orElseThrow(() -> new RuntimeException("数据不存在！"));
     }
 
     private Specification<Organization> fetchDepartments() {
