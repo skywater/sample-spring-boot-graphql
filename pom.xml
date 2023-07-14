@@ -17,6 +17,7 @@
     <modules>
         <module>sample-app-netflix-dgs</module>
 		<module>sample-app-kickstart</module>
+		<module>sample-app-kickstart-anno</module>
         <module>sample-app-spring-graphql</module>
     </modules>
 
