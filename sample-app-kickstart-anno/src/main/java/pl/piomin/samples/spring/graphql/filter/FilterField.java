@@ -1,6 +1,8 @@
 package pl.piomin.samples.spring.graphql.filter;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
@@ -12,6 +14,8 @@ import graphql.annotations.annotationTypes.GraphQLNonNull;
 
 @GraphQLName("FilterField")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FilterField {
     @GraphQLField
     @GraphQLNonNull
