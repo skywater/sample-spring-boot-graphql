@@ -1,11 +1,13 @@
 package pl.piomin.samples.spring.graphql;
 
 import com.graphql.spring.boot.test.GraphQLTestTemplate;
+
+import pl.piomin.samples.spring.graphql.anno.domain.Organization;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pl.piomin.samples.spring.graphql.domain.Organization;
 
 import java.io.IOException;
 
