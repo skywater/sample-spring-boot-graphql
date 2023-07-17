@@ -23,11 +23,11 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.filter.EmployeeFilter;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.filter.FilterField;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.DepartmentPO;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.EmployeePO;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.OrganizationPO;
-import pl.piomin.samples.spring.graphql.annoMybatisPlus.filter.EmployeeFilter;
-import pl.piomin.samples.spring.graphql.annoMybatisPlus.filter.FilterField;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.service.DepartmentSerice;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.service.EmployeeService;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.service.OrganizationService;

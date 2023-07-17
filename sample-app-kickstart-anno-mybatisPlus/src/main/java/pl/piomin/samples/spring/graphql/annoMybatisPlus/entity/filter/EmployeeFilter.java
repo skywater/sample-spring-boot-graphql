@@ -1,4 +1,4 @@
-package pl.piomin.samples.spring.graphql.annoMybatisPlus.filter;
+package pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.filter;
 
 import graphql.annotations.annotationTypes.GraphQLField;
 import graphql.annotations.annotationTypes.GraphQLName;

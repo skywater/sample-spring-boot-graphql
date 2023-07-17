@@ -1,4 +1,4 @@
-package pl.piomin.samples.spring.graphql.annoMybatisPlus.filter;
+package pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
