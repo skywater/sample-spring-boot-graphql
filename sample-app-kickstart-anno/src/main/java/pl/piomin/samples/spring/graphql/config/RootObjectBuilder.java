@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.HandshakeRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -45,6 +46,8 @@ public class RootObjectBuilder extends OncePerRequestFilter implements GraphQLSe
 	private final GraphQLObjectMapper graphQLObjectMapper;
 	private ContentCachingRequestWrapper reqWrapper;
 	private Object source;
+	private static final String QUERY_STR = "query";
+	private static final String MUTABLE_STR = "mutable";
 	
 	@Override
 	public Object build() {
@@ -55,17 +58,18 @@ public class RootObjectBuilder extends OncePerRequestFilter implements GraphQLSe
 	public Object build(HttpServletRequest req) {
 		byte[] contentAsByteArray = reqWrapper.getContentAsByteArray();
 		String body = new String(contentAsByteArray);
-		GraphQLRequest graphqlRequest = null;
+		GraphQLRequest graphqlReq = null;
 	    try {
-	    	graphqlRequest = graphQLObjectMapper.readGraphQLRequest(body);
+	    	graphqlReq = graphQLObjectMapper.readGraphQLRequest(body);
 		} catch (IOException e) {
 			log.error("请求参数={},转换异常：", body, e);
 		}
-	    String operationName = graphqlRequest.getOperationName();
-	    String queryStr = graphqlRequest.getQuery();
+	    String operationName = StringUtils.defaultIfBlank(graphqlReq.getOperationName(), null);
+	    String queryStr = StringUtils.trim(graphqlReq.getQuery());
 	    for(String line : queryStr.split("\n")) {
-	    	if(line.contains(operationName)) {
-	    	    source = line.startsWith("query") ? query : mutable;
+	    	line = StringUtils.trim(line);
+	    	if((StringUtils.isBlank(operationName) && StringUtils.startsWithAny(line, QUERY_STR, MUTABLE_STR)) || StringUtils.contains(line, operationName)) {
+	    	    source = line.startsWith(QUERY_STR) ? query : mutable;
 	    		return source;
 	    	}
 	    }
