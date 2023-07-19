@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,6 +29,7 @@ import graphql.annotations.annotationTypes.GraphQLNonNull;
 @TableName("Employee")
 @Entity(name="Employee")
 @Data
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

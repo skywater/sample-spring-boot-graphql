@@ -7,6 +7,11 @@
 
 package pl.piomin.samples.spring.graphql.annoMybatisPlus.config;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -25,7 +30,20 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import graphql.annotations.processor.DirectiveAndWiring;
+import graphql.annotations.processor.GraphQLAnnotations;
+import graphql.annotations.processor.ProcessingElementsContainer;
+import graphql.annotations.processor.typeFunctions.DefaultTypeFunction;
+import graphql.annotations.processor.typeFunctions.TypeFunction;
+import graphql.relay.Relay;
+import graphql.schema.GraphQLList;
+import graphql.schema.GraphQLSchema;
+import graphql.schema.GraphQLType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.resolver.MutationResolver;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.resolver.QueryResolver;
 
 
 
@@ -37,6 +55,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class BeanAwareConfig implements SmartInitializingSingleton {
 	@Autowired
     private DataSource dataSource;
@@ -51,12 +70,23 @@ public class BeanAwareConfig implements SmartInitializingSingleton {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private Environment env;
+	private final List<TypeFunction> typeFunctions;
+	private final GraphQLSchema graphQLSchema;
+	private final GraphQLAnnotations graphQLAnnotations;
 //	@Autowired
 //	private DataFetchingEnvironment dfEnv;
     
 	@Override
 	public void afterSingletonsInstantiated() {
 //		readSql("classpath:data.sql");
+		ProcessingElementsContainer container = graphQLAnnotations.getContainer();
+		Map<String, GraphQLType> typeRegistry = graphQLAnnotations.getTypeRegistry();
+        Map<String, DirectiveAndWiring> directiveRegistry = container.getDirectiveRegistry();
+        Map<Class<?>, Set<Class<?>>> extensionsTypeRegistry = container.getExtensionsTypeRegistry();
+		System.out.println("typeRegistry" + new TreeSet<>(typeRegistry.keySet()));
+		System.out.println("directiveRegistry" + new TreeSet<>(directiveRegistry.keySet()));
+		System.out.println("extensionsTypeRegistry" + new TreeSet<>(extensionsTypeRegistry.keySet()));
+		System.out.println(1);
 	}
 	
 	private void readSql(String location) { // ScriptRunner

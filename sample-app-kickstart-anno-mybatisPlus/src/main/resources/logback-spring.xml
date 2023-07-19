@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property resource="application.properties" />
+	<property name="MAX_HISTORY" value="14"/>
+	<property name="MAX_FILE_SIZE" value="200MB"/>
+	
+	<!-- scope=context：该属性在本配置内使用有效，source为在application.properties中定义的信息，defaultValue为默认值 -->
+	<springProperty name="logPath" source="log.path" defaultValue="logs" />
+	<springProperty name="logName" source="spring.application.name" defaultValue="${spring.application.name}" />
+	<springProperty name="GRAYLOG_HOST" source="logging.graylogHost" defaultValue="10.0.209.184"/>
+	<springProperty name="GRAYLOG_PORT" source="logging.graylogPort" defaultValue="12201"/>
+
+	<property name="logPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{tid}][%t][%-5p] %logger{36}-%line %msg %n" />
+
+	<!-- 控制台输出 -->
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<logger name="com.hx.fast.data.mapper.HtBalanceBondMapper.insert" level="OFF" />  
+	<logger name="com.hx.ficc.sale.exposure.mapper.RtTrdOtcTradeMapper.insert" level="OFF" />  
+	<logger name="com.hx.ficc.sale.exposure.mapper.RtTrdOtcTradeMapper.updateById" level="OFF" />  
+	<logger name="com.hx.ficc.sale.exposure.mapper.RtTrdOtcTradeMapper.selectById" level="OFF" />
+	
+	<!-- 输出大于等于配置级别的日志到指定stdout.log文件-->
+	<appender name="allAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<!-- 日志文件名称 -->
+		<file>${logName}-${logPath}/${logName}-stdout.log</file>
+		<!-- 每天生成日志文件，文件大小超过200M则新生成一个文件，文件保存最长30天 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/${logName}-stdout.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+		</rollingPolicy>
+	</appender>
+	
+	<!-- 输出info级别日志到指定info.log文件-->
+	<appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<file>${logName}-${logPath}/${logName}-info.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/${logName}-info.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize> 
+		</rollingPolicy>
+		<!-- 过滤器，可以过滤掉不符合条件的日志，INFO级别的日志被处理，其它的拒绝 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<!-- 输出warn级别日志到指定warn.log文件-->
+	<appender name="warnAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<file>${logName}-${logPath}/${logName}-warn.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/${logName}-warn.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize> 
+		</rollingPolicy>
+		<!-- 过滤器，可以过滤掉不符合条件的日志，WARN级别的日志被处理，其它的拒绝 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<!-- 输出error级别日志到指定error.log文件-->
+	<appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<file>${logName}-${logPath}/${logName}-error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/${logName}-error.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize> 
+		</rollingPolicy>
+		<!-- 过滤器，可以过滤掉不符合条件的日志，ERROR级别的日志被处理，其它的拒绝 -->
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<!-- 输出指定级别日志到指定system.log文件-->
+	<appender name="invokerLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${logPattern}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<file>${logName}-${logPath}/invoker.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/invoker.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize> 
+		</rollingPolicy>
+	</appender>
+	<!-- 输出指定目录的日志到frameworkAppender配置，同时指定日志输出级别为大于等于info，向root传递-->
+	<logger name="com.hx.fast.flowable.api.config.anno.BaseRestController" level="INFO">
+		<appender-ref ref="invokerLogAppender" />
+	</logger>
+	<logger name="com.hx.fast.flowable.api.config.anno.CallLogAspect" level="INFO">
+		<appender-ref ref="invokerLogAppender" />
+	</logger>
+	<logger name="com.hx.fast.flowable.api.config.anno.RepeatReqLockAspect" level="INFO">
+		<appender-ref ref="invokerLogAppender" />
+	</logger>
+	<logger name="com.hx.fast.flowable.api.util.AspectUtil" level="INFO">
+		<appender-ref ref="invokerLogAppender" />
+	</logger>
+	<logger name="com.hx.fast.common.cfg.filter.TraceIdGenerateFilter" level="INFO">
+		<appender-ref ref="invokerLogAppender" />
+	</logger>
+
+
+    <!-- 输出sql日志到指定sql.log文件 -->
+    <appender name="sqlAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${logPattern}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <file>${logName}-${logPath}/sql.log</file>
+        <rollingPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logName}-${logPath}/backup_%d{yyyy-MM,aux}/sql.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <MaxHistory>${MAX_HISTORY}</MaxHistory>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+        </rollingPolicy>
+    </appender>
+    
+	<!-- 配置日志输出到Graylog服务 -->
+	<appender name="glef" class="de.siegmar.logbackgelf.GelfUdpAppender">
+	    <!-- 配置Graylog服务的地址 -->
+	    <graylogHost>${GRAYLOG_HOST}</graylogHost>
+	    <!-- UDP Input端口 -->
+	    <graylogPort>${GRAYLOG_PORT}</graylogPort>
+        <encoder class="de.siegmar.logbackgelf.GelfEncoder">
+	      <includeLevelName>true</includeLevelName>
+	      <staticField>app_name:${logName}</staticField>
+      	  <fullPatternLayout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+		  	<pattern>${PATTERN}</pattern>
+		  </fullPatternLayout>
+	    </encoder>
+	</appender>
+	
+    <logger name="com.alibaba.druid.pool.DruidDataSourceStatLoggerImpl" level="debug" additivity="false">
+	    <appender-ref ref="sqlAppender"/>
+	</logger>
+    <logger name="org.apache.ibatis.logging.stdout.StdOutImpl" level="debug" additivity="false">
+	    <appender-ref ref="sqlAppender"/>
+	</logger>
+	<logger name="com.hx.fast.flowable.service.mapper" level="debug" additivity="false">
+		<appender-ref ref="sqlAppender" />
+	</logger>
+
+	<logger name="java" level="DEBUG" />
+	<logger name="java.sql" level="DEBUG" />
+	<logger name="com.alibaba.druid" level="INFO"> <appender-ref ref="sqlAppender" /> </logger>
+	<logger name="org.springframework" level="WARN" />
+	<logger name="springfox.documentation" level="WARN" />
+	<logger name="org.apache" level="INFO" />
+	<logger name="httpclient.wire" level="INFO" />
+	<logger name="org.mybatis" level="DEBUG" />
+	<logger name="org.mybatis.spring.mapper.ClassPathMapperScanner" level="WARN" />
+	<logger name="com.alibaba" level="INFO" />
+	
+	<root level="DEBUG">
+        <appender-ref ref="stdout" />
+		<appender-ref ref="allAppender" />
+		<appender-ref ref="infoAppender" />
+		<appender-ref ref="warnAppender" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="glef" />
+	</root>
+
+</configuration>

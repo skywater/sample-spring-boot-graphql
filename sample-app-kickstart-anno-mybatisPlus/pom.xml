@@ -70,6 +70,21 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+		    <groupId>de.siegmar</groupId>
+		    <artifactId>logback-gelf</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<artifactId>apm-toolkit-trace</artifactId>	
+	        <groupId>org.apache.skywalking</groupId>
+	        <version>8.9.0</version>
+        </dependency>
+		<dependency>
+			<artifactId>apm-toolkit-logback-1.x</artifactId>
+	        <groupId>org.apache.skywalking</groupId>
+	        <version>8.9.0</version>
+        </dependency>
     </dependencies>
 
     <build>

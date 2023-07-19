@@ -61,18 +61,18 @@ public class RootObjectBuilder extends OncePerRequestFilter implements GraphQLSe
 		GraphQLRequest graphqlReq = null;
 	    try {
 	    	graphqlReq = graphQLObjectMapper.readGraphQLRequest(body);
+		    String operationName = null == graphqlReq ? "" : StringUtils.defaultIfBlank(graphqlReq.getOperationName(), null);
+		    String queryStr = StringUtils.trim(graphqlReq.getQuery());
+		    for(String line : queryStr.split("\n")) {
+		    	line = StringUtils.trim(line);
+		    	if((StringUtils.isBlank(operationName) && StringUtils.startsWithAny(line, QUERY_STR, MUTABLE_STR)) || StringUtils.contains(line, operationName)) {
+		    	    source = line.startsWith(QUERY_STR) ? query : mutable;
+		    		return source;
+		    	}
+		    }
 		} catch (IOException e) {
 			log.error("请求参数={},转换异常：", body, e);
 		}
-	    String operationName = StringUtils.defaultIfBlank(graphqlReq.getOperationName(), null);
-	    String queryStr = StringUtils.trim(graphqlReq.getQuery());
-	    for(String line : queryStr.split("\n")) {
-	    	line = StringUtils.trim(line);
-	    	if((StringUtils.isBlank(operationName) && StringUtils.startsWithAny(line, QUERY_STR, MUTABLE_STR)) || StringUtils.contains(line, operationName)) {
-	    	    source = line.startsWith(QUERY_STR) ? query : mutable;
-	    		return source;
-	    	}
-	    }
 	    log.error("graphql查询条件不正确，未找到对应的source");
 		return null;
 	}
