@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 
 import graphql.annotations.annotationTypes.GraphQLField;
 import lombok.RequiredArgsConstructor;
-import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.DepartmentInput;
-import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.EmployeeInput;
-import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.OrganizationInput;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.DepartmentDTO;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.EmployeeDTO;
+import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.dto.OrganizationDTO;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.DepartmentPO;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.EmployeePO;
 import pl.piomin.samples.spring.graphql.annoMybatisPlus.entity.po.OrganizationPO;
@@ -41,29 +41,29 @@ public class MutationResolver {
 	private final OrganizationService orgService;
 	
     @GraphQLField
-	public DepartmentPO newDepartment(DepartmentInput departmentInput) {
-		OrganizationPO organization = orgService.getById(departmentInput.getOrganizationId());
-		DepartmentPO department = new DepartmentPO(null, departmentInput.getName(), organization.getId(), null, null);
-		deptService.save(department);
-		return department;
+	public DepartmentPO newDepartment(DepartmentDTO department) {
+		OrganizationPO organization = orgService.getById(department.getOrganizationId());
+		DepartmentPO departmentPO = new DepartmentPO(null, department.getName(), organization.getId(), null, null);
+		deptService.save(departmentPO);
+		return departmentPO;
 	}
     
     @GraphQLField
-	public EmployeePO newEmployee(EmployeeInput employeeInput) {
-		DepartmentPO department = deptService.getById(employeeInput.getDepartmentId());
-		OrganizationPO organization = orgService.getById(employeeInput.getOrganizationId());
-		EmployeePO employee = new EmployeePO(null, employeeInput.getFirstName(), employeeInput.getLastName(),
-				employeeInput.getPosition(), employeeInput.getAge(), employeeInput.getSalary(),
+	public EmployeePO newEmployee(EmployeeDTO employee) {
+		DepartmentPO department = deptService.getById(employee.getDepartmentId());
+		OrganizationPO organization = orgService.getById(employee.getOrganizationId());
+		EmployeePO employeePO = new EmployeePO(null, employee.getFirstName(), employee.getLastName(),
+				employee.getPosition(), employee.getAge(), employee.getSalary(),
 				department.getId(), organization.getId(), null, null);
-		empService.save(employee);
-		return employee;
+		empService.save(employeePO);
+		return employeePO;
 	}
     
     @GraphQLField
-	public OrganizationPO newOrganization(OrganizationInput organizationInput) {
-    	OrganizationPO organization = new OrganizationPO(null, organizationInput.getName(), null, null);
-		orgService.save(organization);
-		return organization;
+	public OrganizationPO newOrganization(OrganizationDTO organization) {
+    	OrganizationPO organizationPO = new OrganizationPO(null, organization.getName(), null, null);
+		orgService.save(organizationPO);
+		return organizationPO;
 	}
 }
 

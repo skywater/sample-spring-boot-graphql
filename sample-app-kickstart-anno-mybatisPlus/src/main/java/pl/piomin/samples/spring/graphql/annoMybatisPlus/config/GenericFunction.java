@@ -17,22 +17,19 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import graphql.annotations.annotationTypes.GraphQLName;
 import graphql.annotations.processor.ProcessingElementsContainer;
-import graphql.annotations.processor.graphQLProcessors.GraphQLInputProcessor;
-import graphql.annotations.processor.graphQLProcessors.GraphQLOutputProcessor;
 import graphql.annotations.processor.typeFunctions.DefaultTypeFunction;
 import graphql.annotations.processor.typeFunctions.TypeFunction;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
-import graphql.schema.GraphQLSchemaElement;
 import graphql.schema.GraphQLType;
-import graphql.schema.SchemaElementChildrenContainer;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,28 +43,25 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class GenericFunction implements TypeFunction {
 
-	private TypeFunction defaultTypeFunction;
+	private DefaultTypeFunction defaultTypeFunction;
     // 以下参数逻辑来自 ObjectFunction
-    private GraphQLInputProcessor graphQLInputProcessor;
-    private GraphQLOutputProcessor graphQLOutputProcessor;
+	private CopyOnWriteArrayList<TypeFunction> typeFunctions;
 
     public GenericFunction(DefaultTypeFunction defTypeFunc) {
     	init(defTypeFunc);
     }
     public GenericFunction init(TypeFunction defTypeFunc) {
+        this.defaultTypeFunction = (DefaultTypeFunction) defTypeFunc;
         List<Field> fieldsList = FieldUtils.getAllFieldsList(DefaultTypeFunction.class);
         fieldsList.forEach(e -> {
         	try {
-	        	if(e.getType().isAssignableFrom(GraphQLInputProcessor.class)) {
-	        		graphQLInputProcessor = (GraphQLInputProcessor) FieldUtils.readField(e, defTypeFunc, true);
-	        	} else if(e.getType().isAssignableFrom(GraphQLOutputProcessor.class)) {
-	        		graphQLOutputProcessor = (GraphQLOutputProcessor) FieldUtils.readField(e, defTypeFunc, true);
+	        	if(e.getType().isAssignableFrom(CopyOnWriteArrayList.class)) {
+	        		typeFunctions = (CopyOnWriteArrayList<TypeFunction>) FieldUtils.readField(e, defTypeFunc, true);
 	        	}
         	}catch (Exception ex) {
 				log.error("", ex);
 			}
         });
-        this.defaultTypeFunction = defTypeFunc;
         return this;
     }
 
@@ -91,15 +85,11 @@ public class GenericFunction implements TypeFunction {
     	if(!canBuildType(aClass, annotatedType)) { // 避免类中字段循环调用
     		return defaultTypeFunction.buildType(inputType, aClass, annotatedType, container);
     	}
-        
-    	GraphQLType ret = inputType ? graphQLInputProcessor.getInputTypeOrRef(aClass, container) :
-    						graphQLOutputProcessor.getOutputTypeOrRef(aClass, container);
-    	
+    	// 最后一个是 ObjectFunction 
+    	GraphQLType ret = typeFunctions.get(typeFunctions.size()-1).buildType(inputType, aClass, annotatedType, container);    	
     	List<Field> allFieldsList = FieldUtils.getAllFieldsList(aClass);
-    	List<String> fieldNames = allFieldsList.stream().filter(e -> !Modifier.isStatic(e.getModifiers())).filter(e -> {
-    		Type genericType = e.getGenericType();
-    		return genericType instanceof ParameterizedType;
-    	}).map(e -> e.getName()).collect(Collectors.toList());
+    	List<String> fieldNames = allFieldsList.stream().filter(e -> !Modifier.isStatic(e.getModifiers()) && e.getGenericType() instanceof ParameterizedType)
+    			.map(e -> e.getName()).collect(Collectors.toList());
     	
     	Type anType = annotatedType.getType();
     	ParameterizedType ptype = (ParameterizedType) anType;

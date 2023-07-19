@@ -7,34 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@GraphQLName("EmployeeInput")
+// 输入参数自动会带上 Input 前缀,所以命名去掉 Input ！！！
+@GraphQLName("Department")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeInput {
+@NoArgsConstructor
+public class DepartmentDTO {
     @GraphQLField
     @GraphQLNonNull
-	private String firstName;
-
-    @GraphQLField
-    @GraphQLNonNull
-	private String lastName;
+	private String name;
     
     @GraphQLField
-    @GraphQLNonNull
-	private String position;
-    
-    @GraphQLField
-	private Integer salary;
-
-    @GraphQLField
-	private Integer age;
-
-    @GraphQLField
-    @GraphQLNonNull
-	private Integer departmentId;
-
-    @GraphQLField
-    @GraphQLNonNull
 	private Integer organizationId;
 }
